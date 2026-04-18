@@ -1,0 +1,4 @@
+selenium==4.15.2
+openpyxl>=3.1.0
+
+# Note: SQLite3 is built into Python, no additional installation needed

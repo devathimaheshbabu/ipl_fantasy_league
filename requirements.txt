@@ -1,0 +1,9 @@
+# Playwright version requirements
+# For IPL Fantasy Stats Scraper using Playwright
+
+playwright==1.48.0
+
+# Note 1: After installing playwright, run:
+#   playwright install chromium
+#
+# Note 2: SQLite3 is built into Python, no additional installation needed
