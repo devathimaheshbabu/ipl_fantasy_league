@@ -1,0 +1,3289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Fantasy League - Overall Standings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .update-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Leaderboard Styles */
+        .leaderboard {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .leaderboard-item {
+            background: linear-gradient(135deg, #f5f7ff 0%, #ffffff 100%);
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .leaderboard-item.rank-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 2px solid #ffa500;
+        }
+
+        .leaderboard-item.rank-2 {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            border: 2px solid #a0a0a0;
+        }
+
+        .leaderboard-item.rank-3 {
+            background: linear-gradient(135deg, #cd7f32 0%, #e89f71 100%);
+            border: 2px solid #b87333;
+        }
+
+        .rank-badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            width: 45px;
+            text-align: center;
+        }
+
+        .rank-1 .rank-badge {
+            color: #ff8c00;
+        }
+
+        .rank-2 .rank-badge {
+            color: #708090;
+        }
+
+        .rank-3 .rank-badge {
+            color: #8b4513;
+        }
+
+        .team-info {
+            flex: 1;
+            padding: 0 15px;
+        }
+
+        .team-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .team-details {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .points-display {
+            text-align: right;
+        }
+
+        .total-points {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .points-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        /* Top Performers Grid */
+        .performers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .performer-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .performer-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .performer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .performer-rank {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+            width: 30px;
+        }
+
+        .performer-name {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .performer-points {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .comparison-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: #f5f7ff;
+        }
+
+        .role-Captain {
+            background: #ffd700;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 0.85em;
+        }
+
+        .role-Vice-Captain {
+            background: #c0c0c0;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 0.85em;
+        }
+
+        .role-Player {
+            color: #666;
+            padding: 3px 8px;
+            font-size: 0.85em;
+        }
+
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+
+        .player-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .player-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .player-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .player-table tbody tr:hover {
+            background: #f5f7ff;
+        }
+
+        .points {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        /* Team Section */
+        .team-section {
+            margin: 40px 0;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .team-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .team-section-title {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .team-stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-box h3 {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .big-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .change-log {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-top: 20px;
+        }
+
+        .change-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .change-item:last-child {
+            border-bottom: none;
+        }
+
+        .change-date {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .change-description {
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .no-changes {
+            color: #999;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #666;
+        }
+
+        /* MVP Board Styles */
+        .mvp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+
+        .mvp-table thead {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .mvp-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .mvp-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mvp-table tbody tr:hover {
+            background: #fff5f5;
+        }
+
+        .mvp-rank {
+            font-weight: bold;
+            color: #ff6b6b;
+            font-size: 1.1em;
+        }
+
+        /* IPL Team Analysis */
+        .ipl-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .ipl-team-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ipl-team-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .ipl-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .ipl-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        /* Role Distribution */
+        .role-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .role-selector select {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            min-width: 250px;
+        }
+
+        .role-chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .role-bar {
+            margin: 15px 0;
+        }
+
+        .role-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .role-progress {
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .role-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+
+
+        .waterfall-points-bar.leader {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            box-shadow: 0 3px 12px rgba(255, 215, 0, 0.4);
+            height: 60px;
+        }
+
+        .waterfall-points-bar::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .waterfall-team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .waterfall-rank-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .waterfall-points-bar.leader .waterfall-rank-badge {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .waterfall-points-value {
+            font-size: 1.1em;
+        }
+
+        /* Points Progression Chart */
+        .progression-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .leaderboard-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .team-info {
+                padding: 15px 0;
+            }
+
+            .comparison-table, .player-table {
+                font-size: 0.85em;
+            }
+
+            .comparison-table th, .comparison-table td,
+            .player-table th, .player-table td {
+                padding: 8px;
+            }
+
+            .chart-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 IPL Fantasy League - Overall Standings</h1>
+            <p class="update-time">Last Updated: April 18, 2026 at 05:37 PM</p>
+        </header>
+
+        <!-- Overall Leaderboard -->
+        <h2 class="section-title">📊 Overall Leaderboard</h2>
+        <div class="leaderboard">
+
+            <div class="leaderboard-item rank-1">
+                <div class="rank-badge">#1</div>
+                <div class="team-info">
+                    <div class="team-name">Chaitis Magicians</div>
+                    <div class="team-details">
+                        Captain: Virat Kohli |
+                        Vice-Captain: KL Rahul |
+                        Changes: 0/2 |
+                        <span style="color: #28a745;">👑 Leader</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">2564.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item rank-2">
+                <div class="rank-badge">#2</div>
+                <div class="team-info">
+                    <div class="team-name">FC Barca Risers</div>
+                    <div class="team-details">
+                        Captain: Ishan Kishan |
+                        Vice-Captain: Sai Sudharsan |
+                        Changes: 1/2 |
+                        <span style="color: #dc3545;">▼ 273 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">2291.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item rank-3">
+                <div class="rank-badge">#3</div>
+                <div class="team-info">
+                    <div class="team-name">Vineel Warriors</div>
+                    <div class="team-details">
+                        Captain: Shubman Gill |
+                        Vice-Captain: Vaibhav Sooryavanshi |
+                        Changes: 0/2 |
+                        <span style="color: #dc3545;">▼ 14 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">2277.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#4</div>
+                <div class="team-info">
+                    <div class="team-name">Royal Challengers Kurnool</div>
+                    <div class="team-details">
+                        Captain: Shreyas Iyer |
+                        Vice-Captain: Sanju Samson |
+                        Changes: 0/2 |
+                        <span style="color: #dc3545;">▼ 720 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">1557.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#5</div>
+                <div class="team-info">
+                    <div class="team-name">Teja Jambal Heart Rajas</div>
+                    <div class="team-details">
+                        Captain: Abhishek Sharma |
+                        Vice-Captain: Yashasvi Jaiswal |
+                        Changes: 0/2 |
+                        <span style="color: #dc3545;">▼ 306 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">1251.5</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#6</div>
+                <div class="team-info">
+                    <div class="team-name">Mahesh Thunder Buddies</div>
+                    <div class="team-details">
+                        Captain: Nicholas Pooran |
+                        Vice-Captain: Heinrich Klaasen |
+                        Changes: 0/2 |
+                        <span style="color: #dc3545;">▼ 63 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">1188.5</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#7</div>
+                <div class="team-info">
+                    <div class="team-name">DP</div>
+                    <div class="team-details">
+                        Captain: Hardik Pandya |
+                        Vice-Captain: Rishabh Pant |
+                        Changes: 1/2 |
+                        <span style="color: #dc3545;">▼ 212 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">976.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#8</div>
+                <div class="team-info">
+                    <div class="team-name">Les rues de Jamshedpur</div>
+                    <div class="team-details">
+                        Captain: Travis Head |
+                        Vice-Captain: Aiden Markram |
+                        Changes: 0/2 |
+                        <span style="color: #dc3545;">▼ 380 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">596.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-item ">
+                <div class="rank-badge">#9</div>
+                <div class="team-info">
+                    <div class="team-name">Badu Title Hunters</div>
+                    <div class="team-details">
+                        Captain: Suryakumar Yadav |
+                        Vice-Captain: Mitchell Marsh |
+                        Changes: 1/2 |
+                        <span style="color: #dc3545;">▼ 363 pts behind</span>
+                    </div>
+                </div>
+                <div class="points-display">
+                    <div class="total-points">233.0</div>
+                    <div class="points-label">Total Points</div>
+                </div>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">⭐ Top 3 Performers from Each Team</h2>
+        <div class="performers-grid">
+
+            <div class="performer-card">
+                <h3>Chaitis Magicians</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Virat Kohli</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">385 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Prabhsimran Singh</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            PBKS | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">345 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Dhruv Jurel</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RR | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">329 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>FC Barca Risers</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Ishan Kishan</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            SRH | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">367 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Phil Salt</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">340 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Kagiso Rabada</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            GT | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">231 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Vineel Warriors</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Shubman Gill</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            GT | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">393 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Vaibhav Sooryavanshi</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RR | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">320 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Tim David</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">277 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Royal Challengers Kurnool</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Shreyas Iyer</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            PBKS | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">319 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Devdutt Padikkal</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">290 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Sanju Samson</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            CSK | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">272 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Teja Jambal Heart Rajas</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Rajat Patidar</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">394 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Yashasvi Jaiswal</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RR | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">289 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Abhishek Sharma</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            SRH | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">212 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Mahesh Thunder Buddies</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Jos Buttler</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            GT | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">389 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Heinrich Klaasen</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            SRH | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">337 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Angkrish Raghuvanshi</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            KKR | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">294 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>DP</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Ravi Bishnoi</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RR | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">285 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Sameer Rizvi</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            DC | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">243 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Cameron Green</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            KKR | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">240 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Les rues de Jamshedpur</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Jamie Overton</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            CSK | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">287 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Aiden Markram</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            LSG | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">206 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Travis Head</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            SRH | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">0 pts</div>
+                </div>
+
+            </div>
+
+            <div class="performer-card">
+                <h3>Badu Title Hunters</h3>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#1</div>
+                    <div class="performer-name">
+                        <strong>Bhuvneshwar Kumar</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            RCB | <span class="role-Player">Player</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">233 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#2</div>
+                    <div class="performer-name">
+                        <strong>Suryakumar Yadav</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            MI | <span class="role-Captain">Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">0 pts</div>
+                </div>
+
+                <div class="performer-item">
+                    <div class="performer-rank">#3</div>
+                    <div class="performer-name">
+                        <strong>Mitchell Marsh</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            LSG | <span class="role-Vice-Captain">Vice-Captain</span>
+                        </div>
+                    </div>
+                    <div class="performer-points">0 pts</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h2 class="section-title">🏅 Most Valuable Players (League MVP Board)</h2>
+        <table class="mvp-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>IPL Team</th>
+                    <th>Fantasy Team</th>
+                    <th>Official Points</th>
+                    <th>Frozen Points</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td class="mvp-rank">#1</td>
+                    <td><strong>Rajat Patidar</strong></td>
+                    <td>RCB</td>
+                    <td>Teja Jambal Heart Rajas</td>
+                    <td>394</td>
+                    <td>-</td>
+                    <td class="points">394</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#2</td>
+                    <td><strong>Shubman Gill</strong></td>
+                    <td>GT</td>
+                    <td>Vineel Warriors</td>
+                    <td>393</td>
+                    <td>-</td>
+                    <td class="points">393</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#3</td>
+                    <td><strong>Jos Buttler</strong></td>
+                    <td>GT</td>
+                    <td>Mahesh Thunder Buddies</td>
+                    <td>389</td>
+                    <td>-</td>
+                    <td class="points">389</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#4</td>
+                    <td><strong>Virat Kohli</strong></td>
+                    <td>RCB</td>
+                    <td>Chaitis Magicians</td>
+                    <td>385</td>
+                    <td>-</td>
+                    <td class="points">385</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#5</td>
+                    <td><strong>Ishan Kishan</strong></td>
+                    <td>SRH</td>
+                    <td>FC Barca Risers</td>
+                    <td>367</td>
+                    <td>-</td>
+                    <td class="points">367</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#6</td>
+                    <td><strong>Prabhsimran Singh</strong></td>
+                    <td>PBKS</td>
+                    <td>Chaitis Magicians</td>
+                    <td>345</td>
+                    <td>-</td>
+                    <td class="points">345</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#7</td>
+                    <td><strong>Phil Salt</strong></td>
+                    <td>RCB</td>
+                    <td>FC Barca Risers</td>
+                    <td>340</td>
+                    <td>-</td>
+                    <td class="points">340</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#8</td>
+                    <td><strong>Heinrich Klaasen</strong></td>
+                    <td>SRH</td>
+                    <td>Mahesh Thunder Buddies</td>
+                    <td>337</td>
+                    <td>-</td>
+                    <td class="points">337</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#9</td>
+                    <td><strong>Dhruv Jurel</strong></td>
+                    <td>RR</td>
+                    <td>Chaitis Magicians</td>
+                    <td>329</td>
+                    <td>-</td>
+                    <td class="points">329</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#10</td>
+                    <td><strong>Vaibhav Sooryavanshi</strong></td>
+                    <td>RR</td>
+                    <td>Vineel Warriors</td>
+                    <td>320</td>
+                    <td>-</td>
+                    <td class="points">320</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#11</td>
+                    <td><strong>Shreyas Iyer</strong></td>
+                    <td>PBKS</td>
+                    <td>Royal Challengers Kurnool</td>
+                    <td>319</td>
+                    <td>-</td>
+                    <td class="points">319</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#12</td>
+                    <td><strong>Prasidh Krishna</strong></td>
+                    <td>GT</td>
+                    <td>Chaitis Magicians</td>
+                    <td>313</td>
+                    <td>-</td>
+                    <td class="points">313</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#13</td>
+                    <td><strong>Anshul Kamboj</strong></td>
+                    <td>CSK</td>
+                    <td>Chaitis Magicians</td>
+                    <td>310</td>
+                    <td>-</td>
+                    <td class="points">310</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#14</td>
+                    <td><strong>Angkrish Raghuvanshi</strong></td>
+                    <td>KKR</td>
+                    <td>Mahesh Thunder Buddies</td>
+                    <td>294</td>
+                    <td>-</td>
+                    <td class="points">294</td>
+                </tr>
+
+                <tr>
+                    <td class="mvp-rank">#15</td>
+                    <td><strong>Devdutt Padikkal</strong></td>
+                    <td>RCB</td>
+                    <td>Royal Challengers Kurnool</td>
+                    <td>290</td>
+                    <td>-</td>
+                    <td class="points">290</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <h2 class="section-title">🏏 IPL Team Performance Analysis</h2>
+        <div class="ipl-analysis-grid">
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">RR</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>293.4</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>1467</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>5</span>
+                </div>
+                <div class="ipl-bar" style="width: 100.0%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">RCB</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>213.2</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>1919</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>9</span>
+                </div>
+                <div class="ipl-bar" style="width: 72.67287737635387%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">SRH</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>198.8</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>1193</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>6</span>
+                </div>
+                <div class="ipl-bar" style="width: 67.76868893433311%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">GT</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>179.2</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>1971</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>11</span>
+                </div>
+                <div class="ipl-bar" style="width: 61.07083100948132%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">PBKS</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>126.4</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>885</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>7</span>
+                </div>
+                <div class="ipl-bar" style="width: 43.09085597429156%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">CSK</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>96.9</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>1356</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>14</span>
+                </div>
+                <div class="ipl-bar" style="width: 33.01197779725388%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">KKR</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>69.5</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>764</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>11</span>
+                </div>
+                <div class="ipl-bar" style="width: 23.67230588089484%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">DC</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>28.6</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>457</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>16</span>
+                </div>
+                <div class="ipl-bar" style="width: 9.735003408316292%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">MI</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>22.0</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>220</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>10</span>
+                </div>
+                <div class="ipl-bar" style="width: 7.498295841854125%;"></div>
+            </div>
+
+            <div class="ipl-team-card">
+                <div class="ipl-team-name">LSG</div>
+                <div class="ipl-stat">
+                    <span>Avg Points/Player:</span>
+                    <span><strong>20.6</strong></span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Total Points:</span>
+                    <span>206</span>
+                </div>
+                <div class="ipl-stat">
+                    <span>Players in Top 11s:</span>
+                    <span>10</span>
+                </div>
+                <div class="ipl-bar" style="width: 7.021131561008863%;"></div>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">📈 Points Progression Over Time</h2>
+
+        <div class="progression-container">
+            <canvas id="progressionChart" class="chart-canvas"></canvas>
+        </div>
+        <script>
+            const ctx = document.getElementById('progressionChart').getContext('2d');
+            const progressionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+
+                        {
+                            label: 'Badu Title Hunters',
+                            data: [1678.0, 1678.0, 1678.0, 1800.0, 1678.0, 1678.0, 1678.0, 1678.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 233.0, 233.0],
+                            borderColor: '#667eea',
+                            backgroundColor: '#667eea33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Chaitis Magicians',
+                            data: [3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 3237.0, 2564.0, 2564.0],
+                            borderColor: '#f093fb',
+                            backgroundColor: '#f093fb33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'DP',
+                            data: [2217.5, 2217.5, 2217.5, 2301.5, 2217.5, 2217.5, 2217.5, 2217.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 2301.5, 976.0, 976.0],
+                            borderColor: '#4facfe',
+                            backgroundColor: '#4facfe33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'FC Barca Risers',
+                            data: [2732.0, 2732.0, 2732.0, 2925.0, 2732.0, 2732.0, 2732.0, 2732.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2830.0, 2291.0, 2291.0],
+                            borderColor: '#43e97b',
+                            backgroundColor: '#43e97b33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Les rues de Jamshedpur',
+                            data: [2176.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 2230.0, 596.0, 596.0],
+                            borderColor: '#fa709a',
+                            backgroundColor: '#fa709a33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Mahesh Thunder Buddies',
+                            data: [2169.5, 2169.5, 2199.5, 2199.5, 2199.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 2289.5, 1188.5, 1188.5],
+                            borderColor: '#fee140',
+                            backgroundColor: '#fee14033',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Royal Challengers Kurnool',
+                            data: [2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 2405.0, 1557.0, 1557.0],
+                            borderColor: '#30cfd0',
+                            backgroundColor: '#30cfd033',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Teja Jambal Heart Rajas',
+                            data: [2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 2340.5, 1251.5, 1251.5],
+                            borderColor: '#a8edea',
+                            backgroundColor: '#a8edea33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                        {
+                            label: 'Vineel Warriors',
+                            data: [2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2880.0, 2277.0, 2277.0],
+                            borderColor: '#ff6b6b',
+                            backgroundColor: '#ff6b6b33',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Team Points Progression',
+                            font: { size: 16 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total Points'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Updates'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <h2 class="section-title">🎯 IPL Team Contribution by Fantasy Team</h2>
+        <div class="role-selector">
+            <label for="teamSelect" style="font-weight: bold; margin-right: 10px;">Select Fantasy Team:</label>
+            <select id="teamSelect" onchange="updateIPLChart()">
+
+                <option value="Chaitis Magicians">Chaitis Magicians</option>
+
+                <option value="FC Barca Risers">FC Barca Risers</option>
+
+                <option value="Vineel Warriors">Vineel Warriors</option>
+
+                <option value="Royal Challengers Kurnool">Royal Challengers Kurnool</option>
+
+                <option value="Teja Jambal Heart Rajas">Teja Jambal Heart Rajas</option>
+
+                <option value="Mahesh Thunder Buddies">Mahesh Thunder Buddies</option>
+
+                <option value="DP">DP</option>
+
+                <option value="Les rues de Jamshedpur">Les rues de Jamshedpur</option>
+
+                <option value="Badu Title Hunters">Badu Title Hunters</option>
+
+            </select>
+        </div>
+        <div class="role-chart-container" id="iplChartContainer">
+            <!-- Chart will be populated by JavaScript -->
+        </div>
+
+        <script>
+            // Store IPL team contribution data for each fantasy team
+            const fantasyTeamIPLData = {
+
+                "Chaitis Magicians": {
+                    total_points: 2564.0,
+                    ipl_teams: {"RCB": 770, "PBKS": 345, "RR": 329, "GT": 313, "CSK": 310, "SRH": 277, "MI": 220, "DC": 0.0, "KKR": 0}
+                },
+
+                "FC Barca Risers": {
+                    total_points: 2291.0,
+                    ipl_teams: {"SRH": 734, "GT": 555.0, "RCB": 340, "CSK": 227, "PBKS": 221, "DC": 214}
+                },
+
+                "Vineel Warriors": {
+                    total_points: 2277.0,
+                    ipl_teams: {"GT": 786, "RR": 724.0, "RCB": 277, "CSK": 260, "KKR": 230, "DC": 0, "LSG": 0}
+                },
+
+                "Royal Challengers Kurnool": {
+                    total_points: 1557.0,
+                    ipl_teams: {"PBKS": 638, "CSK": 408.0, "RCB": 290, "GT": 221, "DC": 0, "KKR": 0, "LSG": 0}
+                },
+
+                "Teja Jambal Heart Rajas": {
+                    total_points: 1251.5,
+                    ipl_teams: {"RR": 433.5, "SRH": 424, "RCB": 394, "CSK": 0, "DC": 0, "GT": 0, "LSG": 0, "MI": 0, "PBKS": 0}
+                },
+
+                "Mahesh Thunder Buddies": {
+                    total_points: 1188.5,
+                    ipl_teams: {"SRH": 505.5, "GT": 389, "KKR": 294, "LSG": 0, "CSK": 0, "DC": 0, "MI": 0, "PBKS": 0}
+                },
+
+                "DP": {
+                    total_points: 976.0,
+                    ipl_teams: {"RR": 285, "DC": 243, "KKR": 240, "GT": 208, "MI": 0, "LSG": 0.0, "RCB": 0, "SRH": 0}
+                },
+
+                "Les rues de Jamshedpur": {
+                    total_points: 596.0,
+                    ipl_teams: {"LSG": 309.0, "CSK": 287, "SRH": 0, "DC": 0, "GT": 0, "KKR": 0, "MI": 0}
+                },
+
+                "Badu Title Hunters": {
+                    total_points: 233.0,
+                    ipl_teams: {"RCB": 233, "MI": 0, "LSG": 0.0, "DC": 0, "GT": 0, "PBKS": 0}
+                },
+
+            };
+
+            const iplTeamColors = {
+
+                'MI': '#004BA0',
+
+                'CSK': '#FDB913',
+
+                'RCB': '#EC1C24',
+
+                'KKR': '#3A225D',
+
+                'DC': '#0078BC',
+
+                'PBKS': '#ED1B24',
+
+                'RR': '#254AA5',
+
+                'SRH': '#FF822A',
+
+                'GT': '#1C2841',
+
+                'LSG': '#4A1E5B',
+
+            };
+
+            function updateIPLChart() {
+                const teamName = document.getElementById('teamSelect').value;
+                const data = fantasyTeamIPLData[teamName];
+                const total = data.total_points;
+                const iplTeams = data.ipl_teams;
+
+                let chartHTML = `<h3 style="text-align: center; color: #667eea; margin-bottom: 20px;">${teamName} - IPL Team Breakdown</h3>`;
+
+                // Sort IPL teams by points
+                const sortedIPL = Object.entries(iplTeams).sort((a, b) => b[1] - a[1]);
+
+                sortedIPL.forEach(([iplTeam, points]) => {
+                    const percent = (points / total) * 100;
+                    const color = iplTeamColors[iplTeam] || '#667eea';
+
+                    chartHTML += `
+                        <div class="role-bar">
+                            <div class="role-label">
+                                <span><strong>${iplTeam}</strong></span>
+                                <span>${points.toFixed(0)} pts (${percent.toFixed(1)}%)</span>
+                            </div>
+                            <div class="role-progress">
+                                <div class="role-fill" style="width: ${percent}%; background: ${color}; color: white;">
+                                    ${percent.toFixed(1)}%
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                chartHTML += `
+                    <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; text-align: center;">
+                        <strong>Total Team Points: ${total.toFixed(0)}</strong>
+                    </div>
+                `;
+
+                document.getElementById('iplChartContainer').innerHTML = chartHTML;
+            }
+
+            // Initialize with first team
+            updateIPLChart();
+        </script>
+
+        <h2 class="section-title">📈 Points Distribution Breakdown</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Captain Points</th>
+                    <th>Vice-Captain Points</th>
+                    <th>Regular Players</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><strong>Chaitis Magicians</strong></td>
+                    <td>770</td>
+                    <td>0.0</td>
+                    <td>1794</td>
+                    <td class="points">2564.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>FC Barca Risers</strong></td>
+                    <td>734</td>
+                    <td>324.0</td>
+                    <td>1233</td>
+                    <td class="points">2291.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Vineel Warriors</strong></td>
+                    <td>786</td>
+                    <td>480.0</td>
+                    <td>1011</td>
+                    <td class="points">2277.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Royal Challengers Kurnool</strong></td>
+                    <td>638</td>
+                    <td>408.0</td>
+                    <td>511</td>
+                    <td class="points">1557.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Teja Jambal Heart Rajas</strong></td>
+                    <td>424</td>
+                    <td>433.5</td>
+                    <td>394</td>
+                    <td class="points">1251.5</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Mahesh Thunder Buddies</strong></td>
+                    <td>0</td>
+                    <td>505.5</td>
+                    <td>683</td>
+                    <td class="points">1188.5</td>
+                </tr>
+
+                <tr>
+                    <td><strong>DP</strong></td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>976</td>
+                    <td class="points">976.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Les rues de Jamshedpur</strong></td>
+                    <td>0</td>
+                    <td>309.0</td>
+                    <td>287</td>
+                    <td class="points">596.0</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Badu Title Hunters</strong></td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>233</td>
+                    <td class="points">233.0</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Chaitis Magicians</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">2564.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">770</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Virat Kohli</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">0.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">KL Rahul</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Virat Kohli</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>RCB</td>
+                        <td>385</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">770</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Prabhsimran Singh</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>345</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">345</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Dhruv Jurel</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RR</td>
+                        <td>329</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">329</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Prasidh Krishna</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>313</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">313</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Anshul Kamboj</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>310</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">310</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Nitish Kumar Reddy</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>SRH</td>
+                        <td>277</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">277</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ryan Rickelton</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>220</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">220</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>KL Rahul</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">0.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Tristan Stubbs</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Lungi Ngidi</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Tejasvi Singh</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">FC Barca Risers</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">2291.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">734</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Ishan Kishan</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">324.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Sai Sudharsan</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">1/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Ishan Kishan</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>SRH</td>
+                        <td>367</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">734</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Phil Salt</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>340</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">340</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Kagiso Rabada</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>231</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">231</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Sarfaraz Khan</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>227</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">227</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Cooper Connolly</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>221</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">221</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Sai Sudharsan</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>GT</td>
+                        <td>216</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">324.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Pathum Nissanka</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>214</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">214</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Khaleel Ahmed</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Kartik Sharma</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>David Miller</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Jason Holder</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+
+                <div class="change-item">
+                    <div class="change-date">April 18, 2026 at 01:08 PM</div>
+                    <div class="change-description"><strong>🔄 Position Takeover:</strong> <strong>Sarfaraz Khan</strong> takes over Rank 9 from <strong>Sai Kishore</strong> (0 points transferred) <span style="color: #dc3545;">(Counts toward change limit)</span></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Vineel Warriors</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">2277.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">786</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Shubman Gill</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">480.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Vaibhav Sooryavanshi</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Shubman Gill</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>GT</td>
+                        <td>393</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">786</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Vaibhav Sooryavanshi</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>RR</td>
+                        <td>320</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">480.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Tim David</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>277</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">277</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ayush Mhatre</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>260</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">260</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Jofra Archer</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RR</td>
+                        <td>244</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">244</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ajinkya Rahane</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>230</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">230</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Prashant Veer</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Prithvi Shaw</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Anukul Roy</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Varun Chakaravarthy</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Anrich Nortje</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Royal Challengers Kurnool</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">1557.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">638</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Shreyas Iyer</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">408.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Sanju Samson</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Shreyas Iyer</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>PBKS</td>
+                        <td>319</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">638</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Devdutt Padikkal</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>290</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">290</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Sanju Samson</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>CSK</td>
+                        <td>272</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">408.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Rashid Khan</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>221</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">221</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ruturaj Gaikwad</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Akeal Hosein</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Nitish Rana</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Auqib Nabi</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Finn Allen</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Matheesha Pathirana</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ayush Badoni</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Teja Jambal Heart Rajas</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">1251.5</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">424</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Abhishek Sharma</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">433.5</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Yashasvi Jaiswal</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Rajat Patidar</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>394</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">394</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Yashasvi Jaiswal</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>RR</td>
+                        <td>289</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">433.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Abhishek Sharma</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>SRH</td>
+                        <td>212</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">424</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Noor Ahmad</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Matt Henry</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Abishek Porel</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ashutosh Sharma</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Rahul Tewatia</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mohammad Shami</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mitchell Santner</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Shashank Singh</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Mahesh Thunder Buddies</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">1188.5</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Nicholas Pooran</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">505.5</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Heinrich Klaasen</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Jos Buttler</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>389</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">389</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Heinrich Klaasen</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>SRH</td>
+                        <td>337</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">505.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Angkrish Raghuvanshi</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>294</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">294</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Nicholas Pooran</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Dewald Brevis</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>T Natarajan</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Vipraj Nigam</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Ramandeep Singh</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Naman Dhir</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mayank Markande</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Nehal Wadhera</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">DP</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">976.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Hardik Pandya</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">0.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Rishabh Pant</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">1/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Ravi Bishnoi</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RR</td>
+                        <td>285</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">285</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Sameer Rizvi</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>243</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">243</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Cameron Green</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>240</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">240</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Washington Sundar</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>208</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">208</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardik Pandya</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Rishabh Pant</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">0.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mayank Yadav</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Deepak Chahar</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Quinton de Kock</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Jacob Bethell</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Jaydev Unadkat</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>SRH</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+
+                <div class="change-item">
+                    <div class="change-date">April 18, 2026 at 01:08 PM</div>
+                    <div class="change-description"><strong>🔄 Position Takeover:</strong> <strong>Tushar Deshpande</strong> takes over Rank 12 from <strong>Zeeshan Ansari</strong> (0 points transferred) <span style="color: #dc3545;">(Counts toward change limit)</span></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Les rues de Jamshedpur</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">596.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Travis Head</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">309.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Aiden Markram</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">0/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Jamie Overton</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>287</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">287</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Aiden Markram</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>LSG</td>
+                        <td>206</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">309.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Travis Head</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>SRH</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Shivam Dube</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>CSK</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Axar Patel</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mitchell Starc</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mohammed Siraj</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Sunil Narine</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Vaibhav Arora</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>KKR</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Digvesh Singh</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Jasprit Bumrah</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+                <p class="no-changes">No changes recorded yet.</p>
+            </div>
+
+        </div>
+
+        <div class="team-section">
+            <div class="team-section-header">
+                <h2 class="team-section-title">Badu Title Hunters</h2>
+            </div>
+
+            <div class="team-stats-summary">
+                <div class="stat-box">
+                    <h3>Total Points</h3>
+                    <div class="big-number">233.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Captain Points</h3>
+                    <div class="big-number">0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Suryakumar Yadav</div>
+                </div>
+                <div class="stat-box">
+                    <h3>VC Points</h3>
+                    <div class="big-number">0.0</div>
+                    <div style="font-size: 0.85em; margin-top: 5px;">Mitchell Marsh</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Changes Used</h3>
+                    <div class="big-number">1/2</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Top 11 Players</h3>
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Role</th>
+                        <th>IPL Team</th>
+                        <th>Official Points</th>
+                        <th>Frozen Points</th>
+                        <th>Multiplier</th>
+                        <th>Team Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>Bhuvneshwar Kumar</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>233</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">233</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Suryakumar Yadav</strong></td>
+                        <td><span class="role-Captain">Captain</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>2.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Mitchell Marsh</strong></td>
+                        <td><span class="role-Vice-Captain">Vice-Captain</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.5x</td>
+                        <td class="points">0.0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Kuldeep Yadav</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>DC</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Shahrukh Khan</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>GT</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Abdul Samad</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>LSG</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Trent Boult</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>MI</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Marcus Stoinis</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Lockie Ferguson</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>PBKS</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Krunal Pandya</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Josh Hazlewood</strong></td>
+                        <td><span class="role-Player">Player</span></td>
+                        <td>RCB</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td>1.0x</td>
+                        <td class="points">0</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin: 20px 0 15px 0;">Change History</h3>
+            <div class="change-log">
+
+                <div class="change-item">
+                    <div class="change-date">April 18, 2026 at 01:08 PM</div>
+                    <div class="change-description"><strong>🔄 Position Takeover:</strong> <strong>Rovman Powell</strong> takes over Rank 14 from <strong>Rahul Tripathi</strong> (0 points transferred) <span style="color: #dc3545;">(Counts toward change limit)</span></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer>
+            <p><strong>IPL Fantasy League 2025</strong></p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                Powered by IPL Fantasy Stats Scraper | Updated automatically after each match
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
