@@ -1,0 +1,93 @@
+[1776511948.907][INFO]: Starting ChromeDriver 146.0.7680.165 (4b989da09e15a7dc0de0785cb5ff232aadae3f0f-refs/branch-heads/7680@{#2932}) on port 56701
+[1776511948.907][INFO]: Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+[1776511948.919][INFO]: ChromeDriver was started successfully on port 56701
+[1776511949.312][INFO]: [f952d00b9e72297bed383eba1996ade6] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "browserName": "chrome",
+         "goog:chromeOptions": {
+            "args": [ "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--disable-software-rasterizer", "--disable-extensions", "--disable-blink-features=AutomationControlled", "--disable-web-security", "--allow-running-insecure-content", "--ignore-certificate-errors", "--remote-debugging-port=9222", "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" ],
+            "excludeSwitches": [ "enable-automation", "enable-logging" ],
+            "extensions": [  ],
+            "useAutomationExtension": false
+         },
+         "pageLoadStrategy": "normal"
+      },
+      "firstMatch": [ {
+      } ]
+   }
+}
+[1776511949.313][WARNING]: Deprecated chrome option is ignored: useAutomationExtension
+[1776511949.313][WARNING]: Deprecated chrome option is ignored: useAutomationExtension
+[1776511949.313][INFO]: Browser search. Trying... C:\Users\babud6\OneDrive - Bristol Myers Squibb\Desktop\BMS\learning\new_app\chrome.exe
+[1776511949.313][INFO]: Browser search. Trying... C:\Users\babud6\OneDrive - Bristol Myers Squibb\Desktop\BMS\learning\new_app\chrome.exe
+[1776511949.313][INFO]: Browser search. Trying... C:\Users\babud6\OneDrive - Bristol Myers Squibb\Desktop\BMS\learning\new_app\chromium.exe
+[1776511949.324][INFO]: Browser search. Trying... C:\Users\babud6\AppData\Local\Google\Chrome\Application\chrome.exe
+[1776511949.324][INFO]: Browser search. Trying... C:\Program Files\Google\Chrome\Application\chrome.exe
+[1776511949.324][INFO]: Browser search. Found at  C:\Program Files\Google\Chrome\Application\chrome.exe
+[1776511949.334][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1776511949.341][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1776511949.362][INFO]: ChromeDriver supports communication with Chrome via pipes. This is more reliable and more secure.
+[1776511949.362][INFO]: Use the --remote-debugging-pipe Chrome switch instead of the default --remote-debugging-port to enable this communication mode.
+[1776511949.366][INFO]: Launching chrome: "C:\Program Files\Google\Chrome\Application\chrome.exe" --allow-pre-commit-input --allow-running-insecure-content --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-blink-features=AutomationControlled --disable-client-side-phishing-detection --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=IgnoreDuplicateNavs,Prewarm --disable-gpu --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-software-rasterizer --disable-sync --disable-web-security --ignore-certificate-errors --log-level=0 --no-first-run --no-sandbox --no-service-autorun --password-store=basic --remote-debugging-port=9222 --test-type=webdriver --use-mock-keychain --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" --user-data-dir="C:\Users\babud6\AppData\Local\Temp\scoped_dir26108_60321879" data:,
